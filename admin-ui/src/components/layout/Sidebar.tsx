@@ -11,6 +11,7 @@ import {
   FileText,
   LogOut,
   Settings,
+  PlayCircle,
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Alert Types', href: '/alert-types', icon: Bell },
   { name: 'ServiceNow', href: '/servicenow', icon: Server },
   { name: 'Email/SMTP', href: '/email', icon: Mail },
+  { name: 'Test Webhook', href: '/test-webhook', icon: PlayCircle },
   { name: 'Logs', href: '/logs', icon: FileText },
 ];
 

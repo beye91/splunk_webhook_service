@@ -311,3 +311,19 @@ class TestConnectionResponse(BaseModel):
     success: bool
     message: str
     details: Optional[dict] = None
+
+
+# ============================================
+# Webhook Test Schemas
+# ============================================
+class WebhookTestRequest(BaseModel):
+    mnemonic: str
+    host: str
+    vendor: str = "Cisco"
+    message_text: str
+
+
+class WebhookTestResponse(BaseModel):
+    success: bool
+    message: str
+    details: Optional[dict] = None

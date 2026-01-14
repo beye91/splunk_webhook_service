@@ -210,4 +210,15 @@ export const getWebhookLogStats = async (days?: number) => {
   return response.data;
 };
 
+// Webhook Test
+export const testWebhook = async (data: {
+  mnemonic: string;
+  host: string;
+  vendor: string;
+  message_text: string;
+}) => {
+  const response = await api.post('/webhook/test', data);
+  return response.data;
+};
+
 export default api;

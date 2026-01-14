@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from .config import get_settings
-from .routers import auth, llm_providers, servicenow, smtp, alert_types, webhook_logs, users
+from .routers import auth, llm_providers, servicenow, smtp, alert_types, webhook_logs, users, webhook_test
 
 settings = get_settings()
 
@@ -32,6 +32,7 @@ app.include_router(smtp.router, prefix="/api/v1")
 app.include_router(alert_types.router, prefix="/api/v1")
 app.include_router(webhook_logs.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
+app.include_router(webhook_test.router, prefix="/api/v1")
 
 SERVICE_START_TIME = datetime.utcnow()
 

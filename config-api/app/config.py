@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440  # 24 hours
     cors_origins: str = "http://localhost:3000"
+    webhook_service_url: str = "http://webhook-service:5000"
 
     class Config:
         env_file = ".env"

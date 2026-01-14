@@ -127,3 +127,24 @@ export interface TestConnectionResponse {
   message: string;
   details?: Record<string, any>;
 }
+
+export interface WebhookTestRequest {
+  mnemonic: string;
+  host: string;
+  vendor: string;
+  message_text: string;
+}
+
+export interface WebhookTestResponse {
+  success: boolean;
+  message: string;
+  details?: {
+    mnemonic?: string;
+    host?: string;
+    ticket_created?: boolean;
+    ticket_number?: string;
+    email_sent?: boolean;
+    processing_time_ms?: number;
+    log_id?: number;
+  };
+}

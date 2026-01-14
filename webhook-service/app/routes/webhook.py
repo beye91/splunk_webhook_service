@@ -217,7 +217,8 @@ Mnemonic: {mnemonic}"""
             "ticket_number": webhook_log.servicenow_ticket_number,
             "email_sent": webhook_log.email_sent,
             "notifications_count": len(notification_results),
-            "processing_time_ms": processing_time
+            "processing_time_ms": processing_time,
+            "log_id": webhook_log.id
         }), 200
 
     except Exception as e:
