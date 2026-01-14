@@ -6,7 +6,7 @@
 -- Password: Admin123! (bcrypt hash)
 -- ============================================
 INSERT INTO users (username, email, password_hash, role, is_active) VALUES
-('admin', 'admin@localhost', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.QoQqmFmn7e3o7e', 'admin', true);
+('admin', 'admin@localhost', '$2b$12$FynzvCZm9oNL0Y9Ffc5yn.HjTg5byr9./RkTaYcgeIeeu4gCaP4hi', 'admin', true);
 
 -- ============================================
 -- Default LLM Provider (OpenAI - API key needs to be set via UI)

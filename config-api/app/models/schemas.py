@@ -8,7 +8,7 @@ from datetime import datetime
 # ============================================
 class UserBase(BaseModel):
     username: str
-    email: EmailStr
+    email: str  # Changed from EmailStr to allow localhost emails
     role: str = "viewer"
 
 
@@ -17,7 +17,7 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     role: Optional[str] = None
     is_active: Optional[bool] = None
 
