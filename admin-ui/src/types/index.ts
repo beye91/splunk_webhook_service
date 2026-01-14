@@ -148,3 +148,17 @@ export interface WebhookTestResponse {
     log_id?: number;
   };
 }
+
+export interface EmailRecipientCreate {
+  email: string;
+  recipient_name?: string;
+  recipient_type: 'to' | 'cc' | 'bcc';
+}
+
+export interface AlertNotificationCreate {
+  notification_type: 'servicenow' | 'smtp';
+  servicenow_config_id?: number;
+  smtp_config_id?: number;
+  enabled: boolean;
+  email_recipients?: EmailRecipientCreate[];
+}

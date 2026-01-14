@@ -17,12 +17,14 @@ import {
   getLLMProviders,
 } from '@/lib/api';
 import type { AlertType, LLMProvider } from '@/types';
-import { Plus, Edit2, Trash2, Power, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Power, X, Bell } from 'lucide-react';
+import NotificationManager from '@/components/alerts/NotificationManager';
 
 export default function AlertTypesPage() {
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [editingType, setEditingType] = useState<AlertType | null>(null);
+  const [managingNotifications, setManagingNotifications] = useState<AlertType | null>(null);
 
   const { data: alertTypes, isLoading } = useQuery({
     queryKey: ['alertTypes'],
@@ -343,6 +345,14 @@ export default function AlertTypesPage() {
                       >
                         <Power className={`w-4 h-4 ${alertType.enabled ? 'text-green-500' : 'text-gray-400'}`} />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setManagingNotifications(alertType)}
+                        title="Manage Notifications"
+                      >
+                        <Bell className="w-4 h-4 text-purple-500" />
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(alertType)}>
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -364,6 +374,15 @@ export default function AlertTypesPage() {
             ))
           )}
         </div>
+
+        {/* Notification Manager Modal */}
+        {managingNotifications && (
+          <NotificationManager
+            alertTypeId={managingNotifications.id}
+            alertTypeMnemonic={managingNotifications.mnemonic}
+            onClose={() => setManagingNotifications(null)}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
