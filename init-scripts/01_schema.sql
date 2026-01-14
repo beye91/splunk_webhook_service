@@ -38,7 +38,7 @@ CREATE TABLE llm_providers (
 
     -- Common settings
     max_tokens INTEGER DEFAULT 1000,
-    temperature DECIMAL(3,2) DEFAULT 0.7,
+    temperature VARCHAR(10) DEFAULT '0.7',
     enabled BOOLEAN DEFAULT TRUE,
     is_default BOOLEAN DEFAULT FALSE,
 
