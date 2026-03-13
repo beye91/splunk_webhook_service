@@ -1,0 +1,42 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Legacy files
+llmwebhook.py
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Node.js
+node_modules/
+.next/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keys and certs
+*.key
+*.pem
+*.crt
+
+# Claude sessions
+.claude-sessions/
+.playwright-mcp/

@@ -53,6 +53,7 @@ class LLMProviderBase(BaseModel):
     name: str
     provider_type: str
     openai_model: Optional[str] = "gpt-4o-mini-2024-07-18"
+    openai_base_url: Optional[str] = None  # For OpenAI-compatible APIs (vLLM, etc.)
     ollama_host: Optional[str] = None
     ollama_port: Optional[int] = 11434
     ollama_model: Optional[str] = "llama3.1"
@@ -71,6 +72,7 @@ class LLMProviderUpdate(BaseModel):
     provider_type: Optional[str] = None
     api_key: Optional[str] = None
     openai_model: Optional[str] = None
+    openai_base_url: Optional[str] = None  # For OpenAI-compatible APIs (vLLM, etc.)
     ollama_host: Optional[str] = None
     ollama_port: Optional[int] = None
     ollama_model: Optional[str] = None

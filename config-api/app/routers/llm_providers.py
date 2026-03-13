@@ -20,6 +20,7 @@ def list_llm_providers(db: Session = Depends(get_db), current_user: orm.User = D
             name=provider.name,
             provider_type=provider.provider_type,
             openai_model=provider.openai_model,
+            openai_base_url=provider.openai_base_url,
             ollama_host=provider.ollama_host,
             ollama_port=provider.ollama_port,
             ollama_model=provider.ollama_model,
@@ -46,6 +47,7 @@ def get_llm_provider(provider_id: int, db: Session = Depends(get_db), current_us
         name=provider.name,
         provider_type=provider.provider_type,
         openai_model=provider.openai_model,
+        openai_base_url=provider.openai_base_url,
         ollama_host=provider.ollama_host,
         ollama_port=provider.ollama_port,
         ollama_model=provider.ollama_model,
@@ -76,6 +78,7 @@ def create_llm_provider(
         provider_type=provider_data.provider_type,
         api_key_encrypted=encryption.encrypt(provider_data.api_key) if provider_data.api_key else None,
         openai_model=provider_data.openai_model,
+        openai_base_url=provider_data.openai_base_url,
         ollama_host=provider_data.ollama_host,
         ollama_port=provider_data.ollama_port,
         ollama_model=provider_data.ollama_model,
@@ -97,6 +100,7 @@ def create_llm_provider(
         name=provider.name,
         provider_type=provider.provider_type,
         openai_model=provider.openai_model,
+        openai_base_url=provider.openai_base_url,
         ollama_host=provider.ollama_host,
         ollama_port=provider.ollama_port,
         ollama_model=provider.ollama_model,
@@ -144,6 +148,7 @@ def update_llm_provider(
         name=provider.name,
         provider_type=provider.provider_type,
         openai_model=provider.openai_model,
+        openai_base_url=provider.openai_base_url,
         ollama_host=provider.ollama_host,
         ollama_port=provider.ollama_port,
         ollama_model=provider.ollama_model,
@@ -193,23 +198,41 @@ async def test_llm_provider(
                 )
 
             api_key = encryption.decrypt(provider.api_key_encrypted)
-            async with httpx.AsyncClient() as client:
+            base_url = provider.openai_base_url or "https://api.openai.com/v1"
+            models_url = f"{base_url.rstrip('/')}/models"
+
+            # Disable proxy for internal/private IPs (vLLM, etc.)
+            is_internal = any(base_url.startswith(f"http://{prefix}") or base_url.startswith(f"https://{prefix}")
+                             for prefix in ["10.", "172.16.", "172.17.", "172.18.", "172.19.",
+                                          "172.20.", "172.21.", "172.22.", "172.23.", "172.24.",
+                                          "172.25.", "172.26.", "172.27.", "172.28.", "172.29.",
+                                          "172.30.", "172.31.", "192.168.", "localhost", "127."])
+
+            # For internal IPs, use transport to bypass proxy; for external, use default
+            if is_internal:
+                transport = httpx.AsyncHTTPTransport()
+                client_ctx = httpx.AsyncClient(transport=transport, timeout=10.0)
+            else:
+                client_ctx = httpx.AsyncClient(trust_env=True, timeout=10.0)
+
+            async with client_ctx as client:
                 response = await client.get(
-                    "https://api.openai.com/v1/models",
+                    models_url,
                     headers={"Authorization": f"Bearer {api_key}"},
                     timeout=10.0
                 )
                 if response.status_code == 200:
+                    api_name = "OpenAI-compatible API" if provider.openai_base_url else "OpenAI API"
                     return schemas.TestConnectionResponse(
                         success=True,
-                        message="Successfully connected to OpenAI API",
-                        details={"model": provider.openai_model}
+                        message=f"Successfully connected to {api_name}",
+                        details={"model": provider.openai_model, "base_url": base_url}
                     )
                 else:
                     return schemas.TestConnectionResponse(
                         success=False,
-                        message=f"OpenAI API returned status {response.status_code}",
-                        details={"error": response.text}
+                        message=f"API returned status {response.status_code}",
+                        details={"error": response.text, "base_url": base_url}
                     )
 
         elif provider.provider_type == "ollama":
@@ -217,8 +240,22 @@ async def test_llm_provider(
             port = provider.ollama_port or 11434
             url = f"http://{host}:{port}/api/tags"
 
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, timeout=10.0)
+            # Disable proxy for internal Ollama hosts
+            is_internal = any(host.startswith(prefix) for prefix in
+                            ["10.", "172.16.", "172.17.", "172.18.", "172.19.",
+                             "172.20.", "172.21.", "172.22.", "172.23.", "172.24.",
+                             "172.25.", "172.26.", "172.27.", "172.28.", "172.29.",
+                             "172.30.", "172.31.", "192.168.", "localhost", "127."])
+
+            # For internal IPs, use transport to bypass proxy
+            if is_internal:
+                transport = httpx.AsyncHTTPTransport()
+                client_ctx = httpx.AsyncClient(transport=transport, timeout=10.0)
+            else:
+                client_ctx = httpx.AsyncClient(timeout=10.0)
+
+            async with client_ctx as client:
+                response = await client.get(url)
                 if response.status_code == 200:
                     data = response.json()
                     models = [m["name"] for m in data.get("models", [])]

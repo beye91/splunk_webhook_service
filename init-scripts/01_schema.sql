@@ -30,6 +30,7 @@ CREATE TABLE llm_providers (
     -- OpenAI specific
     api_key_encrypted TEXT,
     openai_model VARCHAR(100) DEFAULT 'gpt-4o-mini-2024-07-18',
+    openai_base_url VARCHAR(500),  -- For OpenAI-compatible APIs (vLLM, etc.)
 
     -- Ollama specific
     ollama_host VARCHAR(255),

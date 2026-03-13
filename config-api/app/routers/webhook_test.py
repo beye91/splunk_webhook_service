@@ -54,7 +54,9 @@ async def test_webhook(
     webhook_url = f"{settings.webhook_service_url}/webhook"
 
     try:
-        async with httpx.AsyncClient() as client:
+        # Use transport to bypass proxy for internal Docker network
+        transport = httpx.AsyncHTTPTransport()
+        async with httpx.AsyncClient(transport=transport, timeout=60.0) as client:
             response = await client.post(
                 webhook_url,
                 json=webhook_payload,
@@ -62,8 +64,7 @@ async def test_webhook(
                     "Content-Type": "application/json",
                     "X-Test-Request": "true",
                     "X-Test-User": current_user.username
-                },
-                timeout=60.0  # Longer timeout for LLM processing
+                }
             )
 
             if response.status_code == 200:

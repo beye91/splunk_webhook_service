@@ -15,6 +15,7 @@ class LLMProvider(Base):
     provider_type = Column(String(50), nullable=False)
     api_key_encrypted = Column(Text)
     openai_model = Column(String(100), default="gpt-4o-mini-2024-07-18")
+    openai_base_url = Column(String(500))  # For OpenAI-compatible APIs (vLLM, etc.)
     ollama_host = Column(String(255))
     ollama_port = Column(Integer, default=11434)
     ollama_model = Column(String(100), default="llama3.1")
